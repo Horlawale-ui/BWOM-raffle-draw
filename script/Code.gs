@@ -13,33 +13,63 @@
  * Col F (6): SPUN AT
  * Col G (7): DELIVERED
  * 
- * Workflow Rules:
- * 1. Not Spun (SPINNED != true):
- *    -> Status: "success", spins the wheel, records SPINNED=true, PRIZE, and SPUN AT timestamp.
- * 2. Spun but NOT yet Delivered (SPINNED=true, DELIVERED!=true):
- *    -> Status: "already_spun", delivered: false.
- *    -> Frontend displays the prize they won so they can see and claim it on WhatsApp.
- * 3. Delivered (DELIVERED=true):
- *    -> Status: "already_spun", delivered: true.
- *    -> Frontend shows: "You have already participated in this raffle draw. Thank you for your support!"
+ * Weighted Odds Distribution:
+ * Standard Customers (< 500k):
+ * - Try again: 20%
+ * - Free stickers: 18%
+ * - 5k discount voucher: 18%
+ * - Pouch: 18%
+ * - Wireless mouse: 13%
+ * - Laptop stand: 13%
+ * - 10k discount voucher: 0% (VIP only)
+ * - iPhone 17 Pro Max: 0% (Never won)
+ * 
+ * VIP Customers (>= 500k):
+ * - Try again: 20%
+ * - Free stickers: 15%
+ * - 5k discount voucher: 15%
+ * - Pouch: 15%
+ * - Wireless mouse: 12.5%
+ * - Laptop stand: 12.5%
+ * - 10k discount voucher: 10%
+ * - iPhone 17 Pro Max: 0% (Never won)
  */
 
 const SHEET_NAME = 'Customers';
+const HIGH_TIER_THRESHOLD = 500000;
 
-// Prizes pool matching frontend WHEEL_PRIZES
-// Note: "iPhone 17 Pro Max" is excluded so nobody can win it.
-const STANDARD_PRIZES = [
-  'Wireless mouse',
-  '5k discount voucher',
-  'Laptop stand',
-  'Free stickers',
-  'Pouch',
-  'Try again'
+// Weighted tables (weights sum to 100 for easy tuning)
+const STANDARD_WEIGHTED_PRIZES = [
+  { prize: 'Try again', weight: 20 },
+  { prize: 'Free stickers', weight: 18 },
+  { prize: '5k discount voucher', weight: 18 },
+  { prize: 'Pouch', weight: 18 },
+  { prize: 'Wireless mouse', weight: 13 },
+  { prize: 'Laptop stand', weight: 13 }
 ];
 
-// Special prize only for customers whose purchase amount is >= 500,000
-const HIGH_TIER_PRIZE = '10k discount voucher';
-const HIGH_TIER_THRESHOLD = 500000;
+const VIP_WEIGHTED_PRIZES = [
+  { prize: 'Try again', weight: 20 },
+  { prize: 'Free stickers', weight: 15 },
+  { prize: '5k discount voucher', weight: 15 },
+  { prize: 'Pouch', weight: 15 },
+  { prize: 'Wireless mouse', weight: 12.5 },
+  { prize: 'Laptop stand', weight: 12.5 },
+  { prize: '10k discount voucher', weight: 10 }
+];
+
+function pickWeightedPrize(prizeList) {
+  const totalWeight = prizeList.reduce((sum, item) => sum + item.weight, 0);
+  let random = Math.random() * totalWeight;
+
+  for (let i = 0; i < prizeList.length; i++) {
+    if (random < prizeList[i].weight) {
+      return prizeList[i].prize;
+    }
+    random -= prizeList[i].weight;
+  }
+  return prizeList[0].prize;
+}
 
 function doGet(e) {
   return handleRequest(e);
@@ -172,15 +202,12 @@ function handleRequest(e) {
       purchaseAmount = parseFloat(rawAmt) || 0;
     }
 
-    // Determine eligible prizes
-    let eligiblePrizes = [...STANDARD_PRIZES];
-    // Customers with AMOUNT >= 500k are eligible for the 10k discount voucher
-    if (purchaseAmount >= HIGH_TIER_THRESHOLD) {
-      eligiblePrizes.push(HIGH_TIER_PRIZE);
-    }
+    // Pick prize based on weighted odds table
+    const prizePool = (purchaseAmount >= HIGH_TIER_THRESHOLD)
+      ? VIP_WEIGHTED_PRIZES
+      : STANDARD_WEIGHTED_PRIZES;
 
-    // Pick random prize from eligible prizes (iPhone 17 Pro Max is never in this array)
-    const selectedPrize = eligiblePrizes[Math.floor(Math.random() * eligiblePrizes.length)];
+    const selectedPrize = pickWeightedPrize(prizePool);
 
     // Update Google Sheet columns:
     // SPINNED = true
