@@ -1,9 +1,10 @@
-export async function verifyPrize(apiUrl, name) {
-  const response = await fetch(`${apiUrl}?name=${encodeURIComponent(name.trim())}`)
-
-  if (!response.ok) {
-    throw new Error('Unable to verify prize status')
-  }
-
-  return response.json()
+export default function LogoHeader() {
+  return (
+    <div className="brand-header">
+      <div className="brand-mark" aria-label="Company logo">
+        BWOM
+      </div>
+      <h1 className="brand-title">Customer Raffle Draw</h1>
+    </div>
+  )
 }
