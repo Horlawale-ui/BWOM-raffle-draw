@@ -6,5 +6,5 @@ export default function LogoHeader() {
       </div>
       <h1 className="brand-title">Customer Raffle Draw</h1>
     </div>
-  )
+  );
 }

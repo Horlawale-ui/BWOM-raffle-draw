@@ -1,4 +1,12 @@
-export default function WheelComponent({ rotation, prizes, isSpinning }) {
+import type { Prize } from '../constants/prizes';
+
+interface WheelComponentProps {
+  rotation: number;
+  prizes: Prize[];
+  isSpinning: boolean;
+}
+
+export default function WheelComponent({ rotation, prizes, isSpinning }: WheelComponentProps) {
   return (
     <div className="wheel-stage" aria-label="Prize wheel">
       <div className="wheel-pointer" aria-hidden="true" />
@@ -10,19 +18,19 @@ export default function WheelComponent({ rotation, prizes, isSpinning }) {
         >
           <svg viewBox="0 0 100 100" className="wheel-svg" aria-hidden="true">
             {prizes.map((prize, index) => {
-              const total = prizes.length
-              const angle = 360 / total
-              const start = index * angle
-              const end = (index + 1) * angle
+              const total = prizes.length;
+              const angle = 360 / total;
+              const start = index * angle;
+              const end = (index + 1) * angle;
 
-              const x1 = 50 + 50 * Math.cos((Math.PI * start) / 180)
-              const y1 = 50 + 50 * Math.sin((Math.PI * start) / 180)
-              const x2 = 50 + 50 * Math.cos((Math.PI * end) / 180)
-              const y2 = 50 + 50 * Math.sin((Math.PI * end) / 180)
+              const x1 = 50 + 50 * Math.cos((Math.PI * start) / 180);
+              const y1 = 50 + 50 * Math.sin((Math.PI * start) / 180);
+              const x2 = 50 + 50 * Math.cos((Math.PI * end) / 180);
+              const y2 = 50 + 50 * Math.sin((Math.PI * end) / 180);
 
-              const textAngle = start + angle / 2
-              const textX = 50 + 30 * Math.cos((Math.PI * textAngle) / 180)
-              const textY = 50 + 30 * Math.sin((Math.PI * textAngle) / 180)
+              const textAngle = start + angle / 2;
+              const textX = 50 + 30 * Math.cos((Math.PI * textAngle) / 180);
+              const textY = 50 + 30 * Math.sin((Math.PI * textAngle) / 180);
 
               return (
                 <g key={prize.id}>
@@ -46,7 +54,7 @@ export default function WheelComponent({ rotation, prizes, isSpinning }) {
                     {prize.name.length > 12 ? `${prize.name.slice(0, 10)}..` : prize.name}
                   </text>
                 </g>
-              )
+              );
             })}
           </svg>
         </div>
@@ -56,5 +64,5 @@ export default function WheelComponent({ rotation, prizes, isSpinning }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
