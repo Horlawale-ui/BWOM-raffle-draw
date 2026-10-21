@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="standGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#94a3b8"/>
+      <stop offset="100%" stop-color="#475569"/>
+    </linearGradient>
+  </defs>
+  <!-- Base stand -->
+  <path d="M 18 78 L 82 78 L 74 70 L 26 70 Z" fill="#334155" stroke="#ffffff" stroke-width="1.5"/>
+  <!-- Arm -->
+  <line x1="38" y1="70" x2="68" y2="35" stroke="url(#standGrad)" stroke-width="8" stroke-linecap="round"/>
+  <!-- Platform -->
+  <rect x="22" y="24" width="56" height="18" rx="4" transform="rotate(-15 50 33)" fill="url(#standGrad)" stroke="#ffffff" stroke-width="2"/>
+  <!-- Front lip hook -->
+  <rect x="20" y="32" width="6" height="10" rx="2" transform="rotate(-15 23 37)" fill="#ffffff"/>
+</svg>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="pouchGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#064e3b"/>
+    </linearGradient>
+  </defs>
+  <!-- Pouch bag body -->
+  <path d="M 24 38 Q 18 84 50 84 Q 82 84 76 38 Z" fill="url(#pouchGrad)" stroke="#ffffff" stroke-width="2"/>
+  <!-- Top gathered ruffle -->
+  <path d="M 28 38 Q 50 44 72 38 L 76 28 Q 50 24 24 28 Z" fill="#10b981" stroke="#ffffff" stroke-width="1.5"/>
+  <!-- Drawstring cord -->
+  <path d="M 32 38 Q 50 48 68 38" stroke="#fbbf24" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Hanging beads -->
+  <circle cx="44" cy="50" r="3" fill="#fbbf24"/>
+  <circle cx="56" cy="52" r="3" fill="#fbbf24"/>
+</svg>

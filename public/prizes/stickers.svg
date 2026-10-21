@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="stickGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ec4899"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <!-- Main star sticker -->
+  <polygon points="46,14 55,32 75,34 60,48 64,68 46,58 28,68 32,48 17,34 37,32" fill="url(#stickGrad)" stroke="#ffffff" stroke-width="2.5"/>
+  <!-- Small spark stickers -->
+  <polygon points="76,64 80,72 88,73 82,79 84,87 76,83 68,87 70,79 64,73 72,72" fill="#fbbf24" stroke="#ffffff" stroke-width="1.5"/>
+  <circle cx="24" cy="78" r="6" fill="#38bdf8" stroke="#ffffff" stroke-width="1.5"/>
+</svg>

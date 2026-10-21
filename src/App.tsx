@@ -1,16 +1,17 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { WHEEL_PRIZES, type Prize } from './constants/prizes';
 import { verifyPrize, type PrizeApiResponse } from './utils/api';
 import LogoHeader from './components/LogoHeader';
 import NameInputForm from './components/NameInputForm';
 import WheelComponent from './components/WheelComponent';
 import PrizeResult from './components/PrizeResult';
+import WhatsAppButton from './components/WhatsAppButton';
 
-const ALLOWED_NAME_PATTERN = /^[a-zA-Z0-9\s\-']+$/;
+const ALLOWED_NAME_PATTERN = /^[a-zA-Z0-9\s'.-]+$/;
 const NOT_FOUND_MESSAGE =
   "We couldn't find your name in our purchase records. Place an order with us today to join our next draw!";
 const ALREADY_SPUN_MESSAGE =
-  'You have already spun the wheel for this order! Thank you for participating.';
+  'You have already participated in this raffle draw. Thank you for your support!';
 const CONFIG_ERROR_MESSAGE =
   'Raffle configuration is missing. Please set the VITE_APPS_SCRIPT_URL environment variable.';
 
@@ -26,13 +27,31 @@ export default function App() {
   const [wonData, setWonData] = useState<PrizeApiResponse | null>(null);
   const [submitLocked, setSubmitLocked] = useState(false);
 
+  // Automatically dismiss error messages and warning status after 10 seconds
+  useEffect(() => {
+    if (!errorMessage && status !== 'not_found' && status !== 'already_spun') {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setErrorMessage('');
+      if (status === 'not_found' || status === 'already_spun') {
+        setStatus('idle');
+      }
+    }, 10000);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [errorMessage, status]);
+
   const apiUrl = useMemo(() => import.meta.env.VITE_APPS_SCRIPT_URL?.trim() ?? '', []);
 
   const sanitizeName = (value: string): string => {
     return value
       .replace(/[<>]/g, '')
       .replace(/[\u0000-\u001F\u007F]/g, '')
-      .replace(/[^a-zA-Z0-9\s\-']/g, '')
+      .replace(/[^a-zA-Z0-9\s'.-]/g, '')
       .slice(0, 50);
   };
 
@@ -74,7 +93,7 @@ export default function App() {
     }, 4200);
   };
 
-  const handleVerifyAndSpin = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleVerifyAndSpin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const trimmedName = name.trim();
@@ -114,8 +133,15 @@ export default function App() {
       if (data.status === 'success') {
         startWheelSpin(data);
       } else if (data.status === 'already_spun') {
-        setStatus('already_spun');
-        setErrorMessage(ALREADY_SPUN_MESSAGE);
+        // If not delivered yet, show the prize they won!
+        if (!data.delivered && data.prize) {
+          setWonData(data);
+          setStatus('won');
+        } else {
+          // If already delivered, show already participated message
+          setStatus('already_spun');
+          setErrorMessage(ALREADY_SPUN_MESSAGE);
+        }
       } else {
         setStatus('not_found');
         setErrorMessage(NOT_FOUND_MESSAGE);
@@ -175,6 +201,9 @@ export default function App() {
           </>
         )}
       </div>
+
+      {/* Floating WhatsApp Quick Contact Popup */}
+      <WhatsAppButton />
     </div>
   );
 }

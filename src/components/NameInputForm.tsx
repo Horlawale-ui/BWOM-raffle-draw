@@ -32,11 +32,11 @@ export default function NameInputForm({
         required
         minLength={2}
         maxLength={50}
-        pattern="^[a-zA-Z0-9\\s\\-']+$"
+        pattern="[a-zA-Z0-9\s']+"
         value={name}
         disabled={loading || isSpinning || submitLocked}
         placeholder="Enter your full name"
-        aria-invalid={name.trim().length > 0 && !/^[a-zA-Z0-9\s\-']+$/.test(name.trim())}
+        aria-invalid={name.trim().length > 0 && !/^[a-zA-Z0-9\s'.-]+$/.test(name.trim())}
         onChange={(event) => {
           onNameChange(event.target.value);
         }}

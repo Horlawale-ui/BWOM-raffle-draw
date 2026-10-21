@@ -1,4 +1,13 @@
-export default function SettingsModal({ apiUrl, setApiUrl, onClose, onSave }) {
+import type { FormEvent } from 'react';
+
+interface SettingsModalProps {
+  apiUrl: string;
+  setApiUrl: (url: string) => void;
+  onClose: () => void;
+  onSave: (event: FormEvent<HTMLFormElement>) => void;
+}
+
+export default function SettingsModal({ apiUrl, setApiUrl, onClose, onSave }: SettingsModalProps) {
   return (
     <div className="modal-backdrop" role="dialog" aria-modal="true">
       <div className="settings-modal">

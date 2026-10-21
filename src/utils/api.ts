@@ -2,6 +2,7 @@ export interface PrizeApiResponse {
   status: 'success' | 'already_spun' | 'not_found';
   prize?: string;
   name?: string;
+  delivered?: boolean;
 }
 
 export async function verifyPrize(apiUrl: string, name: string): Promise<PrizeApiResponse> {
@@ -13,14 +14,12 @@ export async function verifyPrize(apiUrl: string, name: string): Promise<PrizeAp
 
   const url = `${safeBaseUrl}?name=${encodeURIComponent(name.trim())}`;
 
+  // Simple GET request without custom headers:
+  // Google Apps Script redirects (302) to googleusercontent.com.
+  // Standard simple GET avoids CORS preflight OPTIONS rejection.
   const response = await fetch(url, {
     method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    cache: 'no-store',
-    credentials: 'omit',
+    redirect: 'follow',
   });
 
   if (!response.ok) {
